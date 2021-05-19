@@ -4,6 +4,9 @@ export const schema = buildSchema(`
 
     type Query {
         loginUser(email: String, password: String): userInfo
+        getUsersPosts(userID: ID): [post]
+        getUsername(userID: ID): userInfo
+        getFollow(userID: ID): userInfo
     }
 
     type userInfo {
@@ -13,6 +16,9 @@ export const schema = buildSchema(`
         email: String
         password: String
         token: String
+        myPosts: [post]
+        following: [userInfo]
+        followers: [userInfo]
     }
 
     type post {
@@ -20,6 +26,7 @@ export const schema = buildSchema(`
         content: String
         postBy: userInfo
         likes: [userInfo]
+        createdAt: String
     }
 
     type Mutation {
@@ -44,6 +51,10 @@ export const schema = buildSchema(`
         followUser(
             userID: ID!
             toFollowID: ID!
+        ): String
+
+        deletePost(
+            postID: ID!
         ): String
 
     }

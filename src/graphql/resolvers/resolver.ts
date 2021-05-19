@@ -19,7 +19,14 @@ export const rootValue = {
 
         try {
 
-            const foundUser = await User.findOne({email})
+            const foundUser = await User.findOne({email}).populate('myPosts').populate({
+                path: 'myPosts',
+                populate: 'postBy'
+            })
+
+            if (email === "" || password === "") {
+                throw new Error ('Please input all fields.')
+            }
 
             if (foundUser === null || undefined) {
                 throw new Error (`User doesn't exist.`)
@@ -32,9 +39,63 @@ export const rootValue = {
             }
 
             const token = sign({ id: foundUser._id}, process.env.JWT_KEY as string)
-            const {firstName, lastName, _id } = foundUser as Iuser
+            const {firstName, lastName, _id, myPosts } = foundUser as Iuser
 
-            return {firstName, token, lastName, email, _id}
+            return {firstName, token, lastName, email, _id, myPosts}
+            
+        } catch (err) {
+            return err
+        }
+
+    },
+
+    getUsersPosts: async (args: {userID: string}) => {
+
+        const {userID} = args
+
+        try {
+
+            const allUsersPosts = await User.findOne({_id: userID}).populate('myPosts').populate({
+                path: 'myPosts',
+                populate: 'postBy'
+            })
+
+            const {myPosts} = allUsersPosts as Iuser
+
+            return myPosts
+            
+        } catch (err) {
+            return err
+        }
+
+    },
+
+    getUsername: async (args: {userID: string}) => {
+
+        const {userID} = args
+
+        try {
+
+            const username = await User.findOne({_id: userID})
+
+            return username
+
+            
+        } catch (err) {
+            return err
+        }
+
+    },
+
+    getFollow: async (args: {userID: string}) => {
+
+        const {userID} = args
+
+        try {
+
+            const follow = await User.findOne({_id: userID}).populate('followers').populate('following')
+
+            return follow
             
         } catch (err) {
             return err
@@ -189,6 +250,22 @@ export const rootValue = {
             })
 
             return 'You followed this user.'
+            
+        } catch (err) {
+            return err
+        }
+
+    },
+
+    deletePost: async (args: {postID: string}) => {
+
+        const {postID} = args
+
+        try {
+
+            await Post.findByIdAndRemove({_id: postID})
+
+            return 'Post deleted.'
             
         } catch (err) {
             return err
