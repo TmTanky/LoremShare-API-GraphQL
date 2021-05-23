@@ -4,9 +4,12 @@ export const schema = buildSchema(`
 
     type Query {
         loginUser(email: String, password: String): userInfo
+        getAllPosts: [post]
         getUsersPosts(userID: ID): [post]
         getUsername(userID: ID): userInfo
         getFollow(userID: ID): userInfo
+        paginate(userID: ID, limitCount: Int, skipCount: Int): [post]
+        reversePaginate(userID: ID, limitCount: Int, skipCount: Int): [post]
     }
 
     type userInfo {
@@ -55,6 +58,17 @@ export const schema = buildSchema(`
 
         deletePost(
             postID: ID!
+        ): String
+
+        editPost(
+            postID: ID!
+            content: String!
+        ): String
+
+        editUsername(
+            userID: ID!
+            firstName: String!
+            lastName: String!
         ): String
 
     }

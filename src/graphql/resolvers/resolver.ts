@@ -8,6 +8,7 @@ import { Ipost } from '../../interfaces/post/post'
 // Models
 import {User} from '../../models/user/user' 
 import {Post} from '../../models/post/post'
+import { IsessionData } from '../../interfaces/session/session'
 
 export const rootValue = {
 
@@ -49,23 +50,82 @@ export const rootValue = {
 
     },
 
-    getUsersPosts: async (args: {userID: string}) => {
+    getAllPosts: async () => {
+
+        try {
+
+            const allPosts = await Post.find()
+
+            return allPosts
+            
+        } catch (err) {
+            return err
+        }
+
+    },
+
+    getUsersPosts: async (args: {userID: Iuser}) => {
 
         const {userID} = args
 
         try {
 
-            const allUsersPosts = await User.findOne({_id: userID}).populate('myPosts').populate({
-                path: 'myPosts',
-                populate: 'postBy'
-            })
+            // const allUsersPosts = await User.findOne({_id: userID}).populate('myPosts').populate({
+            //     path: 'myPosts',
+            //     populate: 'postBy'
+            // })
 
-            const {myPosts} = allUsersPosts as Iuser
+            // const {myPosts} = allUsersPosts as Iuser
 
-            return myPosts
+            // return myPosts
+            const usersPosts = await User.findOne({_id: userID})
+            // const postLength = usersPosts!.myPosts.length - 5
+            // const postLength = await User.findOne({_id: userID})
+            const allUsersPosts = await Post.find().where('postBy', {_id: userID}).populate('postBy').sort({_id: -1}).limit(5).skip(0)
+            // .limit(5).skip(postLength)
+
+            return allUsersPosts
+
             
         } catch (err) {
             return err
+        }
+
+    },
+
+    paginate: async (args: {userID: Iuser, limitCount: number, skipCount: number}, req: Request) => {
+
+        const {userID, limitCount, skipCount} = args
+
+        try {
+
+            // console.log(skipCount)
+
+            // const currentUser = await User.findOne({_id: userID})
+            // const postLength = currentUser!.myPosts.length
+            const allUsersPosts = await Post.find().where('postBy', {_id: userID}).populate('postBy').sort({_id: -1}).limit(limitCount).skip(skipCount)
+            // console.log(allUsersPosts)
+            return allUsersPosts
+            
+        } catch (err) {
+            console.log(err)
+        }
+
+    },
+
+    reversePaginate: async (args: {userID: Iuser, limitCount: number, skipCount: number}, req: Request) => {
+
+        const {userID, limitCount, skipCount} = args
+
+        try {
+            // const currentUser = await User.findOne({_id: userID})
+            // const postLength = currentUser!.myPosts.length
+            const allUsersPosts = await Post.find().where('postBy', {_id: userID}).populate('postBy').limit(limitCount).skip(skipCount)
+
+            return allUsersPosts
+            
+        } catch (err) {
+            console.log(err)
         }
 
     },
@@ -266,6 +326,43 @@ export const rootValue = {
             await Post.findByIdAndRemove({_id: postID})
 
             return 'Post deleted.'
+            
+        } catch (err) {
+            return err
+        }
+
+    },
+    
+    editPost: async (args: {postID: string, content: string}) => {
+
+        const {content, postID} = args
+
+        try {
+
+            await Post.findOneAndUpdate({_id: postID}, {
+                content
+            })
+
+            return 'Post updated.'
+            
+        } catch (err) {
+            return err
+        }
+
+    },
+
+    editUsername: async (args: {userID: string, firstName: string, lastName: string}) => {
+
+        const {userID, firstName, lastName} = args
+
+        try {
+
+            await User.findOneAndUpdate({_id: userID}, {
+                firstName,
+                lastName
+            })
+
+            return 'Profile Updated!'
             
         } catch (err) {
             return err
