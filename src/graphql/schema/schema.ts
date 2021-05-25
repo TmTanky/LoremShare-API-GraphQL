@@ -10,6 +10,9 @@ export const schema = buildSchema(`
         getFollow(userID: ID): userInfo
         paginate(userID: ID, limitCount: Int, skipCount: Int): [post]
         reversePaginate(userID: ID, limitCount: Int, skipCount: Int): [post]
+        getUserByUsername(username: String): [userInfo]
+        viewUser(username: String): userInfo
+        viewUserPosts(username: String): [post]
     }
 
     type userInfo {
@@ -22,6 +25,7 @@ export const schema = buildSchema(`
         myPosts: [post]
         following: [userInfo]
         followers: [userInfo]
+        username: String
     }
 
     type post {

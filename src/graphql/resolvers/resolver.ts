@@ -70,19 +70,13 @@ export const rootValue = {
 
         try {
 
-            // const allUsersPosts = await User.findOne({_id: userID}).populate('myPosts').populate({
-            //     path: 'myPosts',
-            //     populate: 'postBy'
-            // })
-
-            // const {myPosts} = allUsersPosts as Iuser
-
-            // return myPosts
-            const usersPosts = await User.findOne({_id: userID})
-            // const postLength = usersPosts!.myPosts.length - 5
-            // const postLength = await User.findOne({_id: userID})
-            const allUsersPosts = await Post.find().where('postBy', {_id: userID}).populate('postBy').sort({_id: -1}).limit(5).skip(0)
-            // .limit(5).skip(postLength)
+            const allUsersPosts = await Post.find().where('postBy', {_id: userID}).
+                populate('postBy').
+                populate('likes').
+                populate('comments').
+                sort({_id: -1}).
+                limit(5).
+                skip(0)
 
             return allUsersPosts
 
@@ -163,6 +157,57 @@ export const rootValue = {
 
     },
 
+    getUserByUsername: async (args: {username: string}) => {
+
+        const {username} = args
+
+        try {
+
+            const userFound = await User.find({username})
+
+            return userFound
+            
+        } catch (err) {
+            return err
+        }
+
+    },
+
+    viewUser: async (args: {username: string}) => {
+
+        const {username} = args
+
+        try {
+
+            const userFound = await User.findOne({username}).populate('following').populate('followers ')
+
+            return userFound
+            
+        } catch (err) {
+            return err
+        }
+
+    },
+
+    viewUserPosts: async (args: {username: string}) => {
+
+        const {username} = args
+
+        try {
+
+            // console.log(username)
+
+            const viewingUser = await User.findOne({username})
+            const viewingUsersPosts = await Post.find().where('postBy', {_id: viewingUser!  ._id}).populate('postBy')
+            // console.log(username)
+            return viewingUsersPosts
+
+        } catch (err) {
+            return err
+        }
+
+    },
+
     // Mutations
 
     createUser: async (args: {firstName: string, lastName: string, email: string, password: string}) => {
@@ -185,7 +230,8 @@ export const rootValue = {
                 firstName,
                 lastName,
                 email,
-                password: hashedPassword
+                password: hashedPassword,
+                username: `${firstName}-${lastName}`
             })
 
             await newUser.save()

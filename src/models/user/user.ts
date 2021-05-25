@@ -22,7 +22,8 @@ const userSchema = new Schema({
     followers: [{
         type: Schema.Types.ObjectId,
         ref: 'User'
-    }]
+    }],
+    username: String
 }, { timestamps: true })
 
 export const User = model<Iuser>('User', userSchema)

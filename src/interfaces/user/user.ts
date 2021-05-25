@@ -11,4 +11,5 @@ export interface Iuser extends Document {
     myPosts: Ipost[]
     following: Iuser[]
     followers: Iuser[]
+    username: string
 }
