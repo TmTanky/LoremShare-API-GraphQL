@@ -13,6 +13,8 @@ export const schema = buildSchema(`
         getUserByUsername(username: String): [userInfo]
         viewUser(username: String): userInfo
         viewUserPosts(username: String): [post]
+        viewLikes(postID: ID): post
+        viewPostComments(postID: ID): [comment]
     }
 
     type userInfo {
@@ -34,6 +36,14 @@ export const schema = buildSchema(`
         postBy: userInfo
         likes: [userInfo]
         createdAt: String
+        comments: [comment]
+    }
+    
+    type comment {
+        _id: ID
+        content: String
+        commentBy: userInfo
+        commentedOn: post
     }
 
     type Mutation {
@@ -74,6 +84,12 @@ export const schema = buildSchema(`
             firstName: String!
             lastName: String!
         ): String
+
+        createComment(
+            postID: ID!
+            content: String!
+            userID: ID!
+        ): comment
 
     }
 

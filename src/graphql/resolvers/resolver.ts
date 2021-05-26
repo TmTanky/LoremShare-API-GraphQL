@@ -4,11 +4,12 @@ import {sign} from 'jsonwebtoken'
 // Interfaces
 import { Iuser } from '../../interfaces/user/user'
 import { Ipost } from '../../interfaces/post/post'
+import { Icomment } from '../../interfaces/comment/comment'
 
 // Models
 import {User} from '../../models/user/user' 
 import {Post} from '../../models/post/post'
-import { IsessionData } from '../../interfaces/session/session'
+import {Comment} from '../../models/comment/comment'
 
 export const rootValue = {
 
@@ -54,7 +55,10 @@ export const rootValue = {
 
         try {
 
-            const allPosts = await Post.find()
+            const allPosts = await Post.find().
+            populate('likes').
+            populate('postBy').
+            sort({_id: -1})
 
             return allPosts
             
@@ -74,6 +78,10 @@ export const rootValue = {
                 populate('postBy').
                 populate('likes').
                 populate('comments').
+                populate({
+                    path: 'comments',
+                    populate: 'commentBy'
+                }).
                 sort({_id: -1}).
                 limit(5).
                 skip(0)
@@ -198,10 +206,50 @@ export const rootValue = {
             // console.log(username)
 
             const viewingUser = await User.findOne({username})
-            const viewingUsersPosts = await Post.find().where('postBy', {_id: viewingUser!  ._id}).populate('postBy')
+            const viewingUsersPosts = await Post.find().where('postBy', {_id: viewingUser!  ._id}).
+            populate('postBy').
+            populate('likes').
+            sort({_id: -1})
             // console.log(username)
             return viewingUsersPosts
 
+        } catch (err) {
+            return err
+        }
+
+    },
+
+    viewLikes: async (args: {postID: string}) => {
+
+        const {postID} = args
+
+        try {
+
+            const viewedPost = await Post.findOne({_id: postID}).populate('likes')
+
+            return viewedPost
+            
+        } catch (err) {
+            return err
+        }
+
+    },
+
+    viewPostComments: async (args: {postID: string}) => {
+
+        const {postID} = args
+
+        try {
+
+            const foundPost = await Post.findOne({_id: postID}).
+            populate('comments').
+            populate({
+                path: 'comments',
+                populate: 'commentBy'
+            })
+
+            return foundPost!.comments
+            
         } catch (err) {
             return err
         }
@@ -409,6 +457,34 @@ export const rootValue = {
             })
 
             return 'Profile Updated!'
+            
+        } catch (err) {
+            return err
+        }
+
+    },
+
+    createComment: async (args: {postID: string, content: string, userID: string}) => {
+
+        const {postID, content, userID} = args
+
+        try {
+
+            const newComment = new Comment({
+                content,
+                commentBy: userID,
+                commentedOn: postID
+            })
+
+            await newComment.save()
+
+            await Post.findOneAndUpdate({_id: postID}, {
+                $addToSet: {
+                    comments: newComment._id
+                }
+            })
+
+            return newComment
             
         } catch (err) {
             return err
