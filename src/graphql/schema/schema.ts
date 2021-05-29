@@ -15,6 +15,7 @@ export const schema = buildSchema(`
         viewUserPosts(username: String): [post]
         viewLikes(postID: ID): post
         viewPostComments(postID: ID): [comment]
+        viewUserByID(userID: ID): userInfo
     }
 
     type userInfo {
@@ -89,7 +90,21 @@ export const schema = buildSchema(`
             postID: ID!
             content: String!
             userID: ID!
-        ): comment
+        ): String
+
+        sendEmail(
+            email: String!
+        ): String
+
+        changePassword(
+            userID: ID!
+            newPass: String!
+        ): String
+
+        changeUsername(
+            userID: ID!
+            newUsername: String!
+        ): String
 
     }
 

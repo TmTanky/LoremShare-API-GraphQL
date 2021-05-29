@@ -1,10 +1,11 @@
 import {hash, compare} from 'bcrypt'
 import {sign} from 'jsonwebtoken'
+import {createTestAccount, createTransport, getTestMessageUrl} from 'nodemailer'
 
 // Interfaces
 import { Iuser } from '../../interfaces/user/user'
-import { Ipost } from '../../interfaces/post/post'
-import { Icomment } from '../../interfaces/comment/comment'
+// import { Ipost } from '../../interfaces/post/post'
+// import { Icomment } from '../../interfaces/comment/comment'
 
 // Models
 import {User} from '../../models/user/user' 
@@ -12,6 +13,51 @@ import {Post} from '../../models/post/post'
 import {Comment} from '../../models/comment/comment'
 
 export const rootValue = {
+
+    // Nodemailer
+
+    sendEmail: async (args: {email: string}) => {
+
+        const {email} = args
+
+        let WholeCode = ""
+        let i = 0
+
+        for (i; i < 6; i++) {
+            const randomNum = Math.floor(Math.random() * 10)
+            WholeCode+=randomNum
+        }
+
+        let transporter = createTransport({
+            name: 'Social-Lorem-Vue',
+            service: 'gmail',
+            auth: {
+                user: `${process.env.NODEMAILER_EMAIL}`,
+                pass: `${process.env.NODEMAILER_PASS as string}`
+            }
+        })
+
+        const mailOptions = {
+            from: 'Social-Lorem-Vue',
+            to: email,
+            subject: 'Password Reset',
+            text: `Here is your password reset code ${WholeCode}`
+        }
+
+        let info = await transporter.sendMail(mailOptions);
+
+        console.log(info)
+
+        // console.log("Message sent: %s", info.messageId);
+        // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
+
+        // Preview only available when sending through an Ethereal account
+        // console.log("Preview URL: %s", getTestMessageUrl(info));
+        // Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou...
+
+        return 'Email Sent'
+
+    },
 
     // Queries
 
@@ -187,7 +233,9 @@ export const rootValue = {
 
         try {
 
-            const userFound = await User.findOne({username}).populate('following').populate('followers ')
+            const userFound = await User.findOne({username}).
+            populate('following').
+            populate('followers')
 
             return userFound
             
@@ -209,6 +257,11 @@ export const rootValue = {
             const viewingUsersPosts = await Post.find().where('postBy', {_id: viewingUser!  ._id}).
             populate('postBy').
             populate('likes').
+            populate('comments').
+            populate({
+                path: 'comments',
+                populate: 'commentBy'
+            }).
             sort({_id: -1})
             // console.log(username)
             return viewingUsersPosts
@@ -249,6 +302,24 @@ export const rootValue = {
             })
 
             return foundPost!.comments
+            
+        } catch (err) {
+            return err
+        }
+
+    },
+
+    viewUserByID: async (args: {userID: string}) => {
+
+        const {userID} = args
+
+        try {
+
+            const foundUser = await User.findById(userID).
+            populate('following').
+            populate('followers')
+
+            return foundUser
             
         } catch (err) {
             return err
@@ -484,7 +555,45 @@ export const rootValue = {
                 }
             })
 
-            return newComment
+            return 'You commented on this post. '
+            
+        } catch (err) {
+            return err
+        }
+
+    },
+
+    changePassword: async (args: {userID: string, newPass: string}) => {
+
+        const {userID, newPass} = args
+
+        try {
+
+            const hashedPassword = await hash(newPass, 10)
+
+            await User.findOneAndUpdate({_id: userID}, {
+                password: hashedPassword
+            })
+
+            return 'Password Changed Successfully'
+            
+        } catch (err) {
+            return err
+        }
+
+    },
+
+    changeUsername: async (args: {userID: string, newUsername: string}) => {
+
+        const {userID, newUsername} = args
+
+        try {
+
+            await User.findOneAndUpdate({_id: userID}, {
+                username: newUsername
+            })
+
+            return 'Username Successfully Changed.  '
             
         } catch (err) {
             return err
