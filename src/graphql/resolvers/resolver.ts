@@ -1,6 +1,6 @@
 import {hash, compare} from 'bcrypt'
 import {sign} from 'jsonwebtoken'
-import {createTestAccount, createTransport, getTestMessageUrl} from 'nodemailer'
+import {createTransport} from 'nodemailer'
 
 // Interfaces
 import { Iuser } from '../../interfaces/user/user'
@@ -11,6 +11,7 @@ import { Iuser } from '../../interfaces/user/user'
 import {User} from '../../models/user/user' 
 import {Post} from '../../models/post/post'
 import {Comment} from '../../models/comment/comment'
+import { Request } from 'express'
 
 export const rootValue = {
 
@@ -19,6 +20,8 @@ export const rootValue = {
     sendEmail: async (args: {email: string}) => {
 
         const {email} = args
+
+        const usersEmail = await User.findOne({email})
 
         let WholeCode = ""
         let i = 0
@@ -44,9 +47,9 @@ export const rootValue = {
             text: `Here is your password reset code ${WholeCode}`
         }
 
-        let info = await transporter.sendMail(mailOptions);
+        await transporter.sendMail(mailOptions);
 
-        console.log(info)
+        // console.log(info)
 
         // console.log("Message sent: %s", info.messageId);
         // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
@@ -55,7 +58,10 @@ export const rootValue = {
         // console.log("Preview URL: %s", getTestMessageUrl(info));
         // Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou...
 
-        return 'Email Sent'
+        return {
+            userID: usersEmail?._id,
+            code: WholeCode
+        }
 
     },
 
@@ -97,7 +103,7 @@ export const rootValue = {
 
     },
 
-    getAllPosts: async () => {
+    getAllPosts: async (args: any, req: Request) => {
 
         try {
 
@@ -114,7 +120,7 @@ export const rootValue = {
 
     },
 
-    getUsersPosts: async (args: {userID: Iuser}) => {
+    getUsersPosts: async (args: {userID: Iuser}, req: Request) => {
 
         const {userID} = args
 

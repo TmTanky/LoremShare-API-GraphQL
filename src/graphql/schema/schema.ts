@@ -40,6 +40,11 @@ export const schema = buildSchema(`
         comments: [comment]
     }
     
+    type code {
+        code: String
+        userID: ID
+    }
+    
     type comment {
         _id: ID
         content: String
@@ -94,7 +99,7 @@ export const schema = buildSchema(`
 
         sendEmail(
             email: String!
-        ): String
+        ): code
 
         changePassword(
             userID: ID!
