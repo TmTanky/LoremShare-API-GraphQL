@@ -1,9 +1,8 @@
 require('dotenv').config()
-import express from 'express'
+import express, { Response, response } from 'express'
 import {graphqlHTTP} from 'express-graphql'
 import {connect} from 'mongoose'
 import cors from 'cors'
-// import cookieSession from 'cookie-session'
 
 import {schema} from './graphql/schema/schema'
 import {rootValue} from './graphql/resolvers/resolver'
@@ -21,7 +20,6 @@ app.use(cors())
 app.use(express.json())
 app.use(express.urlencoded({extended: true}))
 
-app.use(auth)
 app.use('/graphql', graphqlHTTP({
     schema,
     rootValue,
