@@ -62,8 +62,31 @@ import {verify} from 'jsonwebtoken'
 // }
 
 export const auth: RequestHandler = (req, res, next) => {
+    
+    req.normalQuery = true
+    req.isAuth = false
 
     let token 
+
+    if (req.headers.login === 'true') {
+        req.isAuth = false
+        return next()
+    }
+        
+    if (req.headers.register === 'true') {
+        req.isAuth = false
+        return next()
+    }
+        
+    if (req.headers.reset === 'true') {
+        req.isAuth = false
+        return next()
+    }
+        
+    if (req.headers.confirm === 'true') {
+        req.isAuth = false
+        return next()
+    }
 
     if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
 
@@ -72,6 +95,7 @@ export const auth: RequestHandler = (req, res, next) => {
         const decoded = verify(token, process.env.JWT_KEY as string)
 
         if (decoded) {
+            req.isAuth = true
             return next()
         } else {
             throw new Error ('Invalid Token')
@@ -79,8 +103,10 @@ export const auth: RequestHandler = (req, res, next) => {
 
     } 
 
-    if (!token) {
-        throw new Error ('Invalid Token')
-    }
+    // if (!token) {
+    //     throw new Error ('Invalid Token')
+    // }
+
+    next()
 
 }
