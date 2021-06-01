@@ -20,7 +20,7 @@ app.use(cors())
 app.use(express.json())
 app.use(express.urlencoded({extended: true}))
 
-// app.use(auth)
+app.use(auth)
 app.use('/graphql', graphqlHTTP({
     schema,
     rootValue,
