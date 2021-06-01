@@ -61,11 +61,9 @@ import {verify} from 'jsonwebtoken'
 
 // }
 
-export const auth: RequestHandler = async (req, res, next) => {
-    
+export const auth = async (req: Request) => {
+
     let token
-    req.normalQuery = true
-    req.isAuth = false
 
     try {
 
@@ -74,20 +72,15 @@ export const auth: RequestHandler = async (req, res, next) => {
             const decoded = verify(token, process.env.JWT_KEY as string)
 
             if (decoded) {
-                req.isAuth = true
-                req.normalQuery = false
-                return next()
+                return token
             } else {
                 throw new Error ('Invalid Token')
             }
         }
 
-        if (req.normalQuery) {
-            return next()
-        }
 
-        if (!token && !req.isAuth) {
-            throw new Error ("Unauthorized.")
+        if (!token) {
+            return token = null
         }
         
     } catch (err) {

@@ -110,7 +110,9 @@ export const rootValue = {
 
         try {
 
-            if (!req.isAuth) {
+            const result = await auth(req)
+            
+            if (!result) {
                 throw new Error ('Unauthorized.')
             }
 
@@ -133,7 +135,9 @@ export const rootValue = {
 
         try {
 
-            if (!req.isAuth) {
+            const result = await auth(req)
+            
+            if (!result) {
                 throw new Error ('Unauthorized.')
             }
 
@@ -164,16 +168,14 @@ export const rootValue = {
 
         try {
 
-            if (!req.isAuth) {
+            const result = await auth(req)
+            
+            if (!result) {
                 throw new Error ('Unauthorized.')
             }
-
-            // console.log(skipCount)
-
-            // const currentUser = await User.findOne({_id: userID})
-            // const postLength = currentUser!.myPosts.length
+            
             const allUsersPosts = await Post.find().where('postBy', {_id: userID}).populate('postBy').sort({_id: -1}).limit(limitCount).skip(skipCount)
-            // console.log(allUsersPosts)
+
             return allUsersPosts
             
         } catch (err) {
@@ -188,11 +190,12 @@ export const rootValue = {
 
         try {
 
-            if (!req.isAuth) {
+            const result = await auth(req)
+            
+            if (!result) {
                 throw new Error ('Unauthorized.')
             }
-            // const currentUser = await User.findOne({_id: userID})
-            // const postLength = currentUser!.myPosts.length
+
             const allUsersPosts = await Post.find().where('postBy', {_id: userID}).populate('postBy').limit(limitCount).skip(skipCount)
 
             return allUsersPosts
@@ -209,7 +212,9 @@ export const rootValue = {
 
         try {
 
-            if (!req.isAuth) {
+            const result = await auth(req)
+            
+            if (!result) {
                 throw new Error ('Unauthorized.')
             }
 
@@ -230,7 +235,9 @@ export const rootValue = {
 
         try {
 
-            if (!req.isAuth) {
+            const result = await auth(req)
+            
+            if (!result) {
                 throw new Error ('Unauthorized.')
             }
 
@@ -250,7 +257,9 @@ export const rootValue = {
 
         try {
 
-            if (!req.isAuth) {
+            const result = await auth(req)
+            
+            if (!result) {
                 throw new Error ('Unauthorized.')
             }
 
@@ -270,7 +279,9 @@ export const rootValue = {
 
         try {
 
-            if (!req.isAuth) {
+            const result = await auth(req)
+            
+            if (!result) {
                 throw new Error ('Unauthorized.')
             }
 
@@ -292,11 +303,11 @@ export const rootValue = {
 
         try {
 
-            if (!req.isAuth) {
+            const result = await auth(req)
+            
+            if (!result) {
                 throw new Error ('Unauthorized.')
             }
-
-            // console.log(username)
 
             const viewingUser = await User.findOne({username})
             const viewingUsersPosts = await Post.find().where('postBy', {_id: viewingUser!  ._id}).
@@ -309,7 +320,7 @@ export const rootValue = {
             }).
             sort({_id: -1})
             .limit(limitCount)
-            // console.log(username)
+
             return viewingUsersPosts
 
         } catch (err) {
@@ -324,7 +335,9 @@ export const rootValue = {
 
         try {
 
-            if (!req.isAuth) {
+            const result = await auth(req)
+            
+            if (!result) {
                 throw new Error ('Unauthorized.')
             }
 
@@ -344,7 +357,9 @@ export const rootValue = {
 
         try {
 
-            if (!req.isAuth) {
+            const result = await auth(req)
+            
+            if (!result) {
                 throw new Error ('Unauthorized.')
             }
 
@@ -369,7 +384,9 @@ export const rootValue = {
 
         try {
 
-            if (!req.isAuth) {
+            const result = await auth(req)
+            
+            if (!result) {
                 throw new Error ('Unauthorized.')
             }
 
@@ -431,7 +448,9 @@ export const rootValue = {
 
         try {
 
-            if (!req.isAuth) {
+            const result = await auth(req)
+            
+            if (!result) {
                 throw new Error ('Unauthorized.')
             }
 
@@ -466,7 +485,9 @@ export const rootValue = {
 
         try {
 
-            if (!req.isAuth) {
+            const result = await auth(req)
+            
+            if (!result) {
                 throw new Error ('Unauthorized.')
             }
 
@@ -504,7 +525,9 @@ export const rootValue = {
 
         try {
 
-            if (!req.isAuth) {
+            const result = await auth(req)
+            
+            if (!result) {
                 throw new Error ('Unauthorized.')
             }
 
@@ -554,7 +577,9 @@ export const rootValue = {
 
         try {
 
-            if (!req.isAuth) {
+            const result = await auth(req)
+            
+            if (!result) {
                 throw new Error ('Unauthorized.')
             }
 
@@ -574,7 +599,9 @@ export const rootValue = {
 
         try {
 
-            if (!req.isAuth) {
+            const result = await auth(req)
+            
+            if (!result) {
                 throw new Error ('Unauthorized.')
             }
 
@@ -596,7 +623,9 @@ export const rootValue = {
 
         try {
 
-            if (!req.isAuth) {
+            const result = await auth(req)
+            
+            if (!result) {
                 throw new Error ('Unauthorized.')
             }
 
@@ -619,7 +648,9 @@ export const rootValue = {
 
         try {
 
-            if (!req.isAuth) {
+            const result = await auth(req)
+            
+            if (!result) {
                 throw new Error ('Unauthorized.')
             }
 
@@ -645,13 +676,11 @@ export const rootValue = {
 
     },
 
-    changePassword: async (args: {userID: string, newPass: string}, req: Request) => {
+    changePassword: async (args: {userID: string, newPass: string}) => {
 
         const {userID, newPass} = args
 
         try {
-
-            req.normalQuery = true
 
             const hashedPassword = await hash(newPass, 10)
 
@@ -673,7 +702,9 @@ export const rootValue = {
 
         try {
 
-            if (!req.isAuth) {
+            const result = await auth(req)
+            
+            if (!result) {
                 throw new Error ('Unauthorized.')
             }
 
