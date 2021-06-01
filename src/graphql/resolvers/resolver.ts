@@ -111,7 +111,7 @@ export const rootValue = {
         try {
 
             if (!req.isAuth) {
-                throw new Error ('Unauthorized')
+                throw new Error ('Unauthorized.')
             }
 
             const allPosts = await Post.find().
@@ -134,7 +134,7 @@ export const rootValue = {
         try {
 
             if (!req.isAuth) {
-                throw new Error ('Unauthorized')
+                throw new Error ('Unauthorized.')
             }
 
             const allUsersPosts = await Post.find().where('postBy', {_id: userID}).
@@ -165,7 +165,7 @@ export const rootValue = {
         try {
 
             if (!req.isAuth) {
-                throw new Error ('Unauthorized')
+                throw new Error ('Unauthorized.')
             }
 
             // console.log(skipCount)
@@ -189,7 +189,7 @@ export const rootValue = {
         try {
 
             if (!req.isAuth) {
-                throw new Error ('Unauthorized')
+                throw new Error ('Unauthorized.')
             }
             // const currentUser = await User.findOne({_id: userID})
             // const postLength = currentUser!.myPosts.length
@@ -210,7 +210,7 @@ export const rootValue = {
         try {
 
             if (!req.isAuth) {
-                throw new Error ('Unauthorized')
+                throw new Error ('Unauthorized.')
             }
 
             const username = await User.findOne({_id: userID})
@@ -231,7 +231,7 @@ export const rootValue = {
         try {
 
             if (!req.isAuth) {
-                throw new Error ('Unauthorized')
+                throw new Error ('Unauthorized.')
             }
 
             const follow = await User.findOne({_id: userID}).populate('followers').populate('following')
@@ -251,7 +251,7 @@ export const rootValue = {
         try {
 
             if (!req.isAuth) {
-                throw new Error ('Unauthorized')
+                throw new Error ('Unauthorized.')
             }
 
             const userFound = await User.find({username})
@@ -271,7 +271,7 @@ export const rootValue = {
         try {
 
             if (!req.isAuth) {
-                throw new Error ('Unauthorized')
+                throw new Error ('Unauthorized.')
             }
 
             const userFound = await User.findOne({username}).
@@ -293,7 +293,7 @@ export const rootValue = {
         try {
 
             if (!req.isAuth) {
-                throw new Error ('Unauthorized')
+                throw new Error ('Unauthorized.')
             }
 
             // console.log(username)
@@ -325,7 +325,7 @@ export const rootValue = {
         try {
 
             if (!req.isAuth) {
-                throw new Error ('Unauthorized')
+                throw new Error ('Unauthorized.')
             }
 
             const viewedPost = await Post.findOne({_id: postID}).populate('likes')
@@ -345,7 +345,7 @@ export const rootValue = {
         try {
 
             if (!req.isAuth) {
-                throw new Error ('Unauthorized')
+                throw new Error ('Unauthorized.')
             }
 
             const foundPost = await Post.findOne({_id: postID}).
@@ -370,7 +370,7 @@ export const rootValue = {
         try {
 
             if (!req.isAuth) {
-                throw new Error ('Unauthorized')
+                throw new Error ('Unauthorized.')
             }
 
             const foundUser = await User.findById(userID).
@@ -392,10 +392,6 @@ export const rootValue = {
         const {firstName, lastName, email, password} = args
 
         try {
-
-            if (firstName === "" || lastName === "" || email === "" || password === "") {
-                throw new Error ('Please fill all inputs.')
-            }
 
             if (password.length < 5) {
                 throw new Error ('Password must be 5 characters long.')
@@ -436,7 +432,7 @@ export const rootValue = {
         try {
 
             if (!req.isAuth) {
-                throw new Error ('Unauthorized')
+                throw new Error ('Unauthorized.')
             }
 
             if (content === "") {
@@ -471,7 +467,7 @@ export const rootValue = {
         try {
 
             if (!req.isAuth) {
-                throw new Error ('Unauthorized')
+                throw new Error ('Unauthorized.')
             }
 
             const foundPost = await Post.findOne({_id: postID})
@@ -509,7 +505,7 @@ export const rootValue = {
         try {
 
             if (!req.isAuth) {
-                throw new Error ('Unauthorized')
+                throw new Error ('Unauthorized.')
             }
 
             const toFollowUser = await User.findOne({_id: toFollowID})
@@ -559,7 +555,7 @@ export const rootValue = {
         try {
 
             if (!req.isAuth) {
-                throw new Error ('Unauthorized')
+                throw new Error ('Unauthorized.')
             }
 
             await Post.findByIdAndRemove({_id: postID})
@@ -579,7 +575,7 @@ export const rootValue = {
         try {
 
             if (!req.isAuth) {
-                throw new Error ('Unauthorized')
+                throw new Error ('Unauthorized.')
             }
 
             await Post.findOneAndUpdate({_id: postID}, {
@@ -599,9 +595,9 @@ export const rootValue = {
         const {userID, firstName, lastName} = args
 
         try {
-            
+
             if (!req.isAuth) {
-                throw new Error ('Unauthorized')
+                throw new Error ('Unauthorized.')
             }
 
             await User.findOneAndUpdate({_id: userID}, {
@@ -624,7 +620,7 @@ export const rootValue = {
         try {
 
             if (!req.isAuth) {
-                throw new Error ('Unauthorized')
+                throw new Error ('Unauthorized.')
             }
 
             const newComment = new Comment({
@@ -649,11 +645,13 @@ export const rootValue = {
 
     },
 
-    changePassword: async (args: {userID: string, newPass: string}) => {
+    changePassword: async (args: {userID: string, newPass: string}, req: Request) => {
 
         const {userID, newPass} = args
 
         try {
+
+            req.normalQuery = true
 
             const hashedPassword = await hash(newPass, 10)
 
@@ -676,7 +674,7 @@ export const rootValue = {
         try {
 
             if (!req.isAuth) {
-                throw new Error ('Unauthorized')
+                throw new Error ('Unauthorized.')
             }
 
             await User.findOneAndUpdate({_id: userID}, {

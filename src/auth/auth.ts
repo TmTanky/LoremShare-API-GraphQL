@@ -61,52 +61,37 @@ import {verify} from 'jsonwebtoken'
 
 // }
 
-export const auth: RequestHandler = (req, res, next) => {
+export const auth: RequestHandler = async (req, res, next) => {
     
+    let token
     req.normalQuery = true
     req.isAuth = false
 
-    let token 
+    try {
 
-    if (req.headers.login === 'true') {
-        return next()
-    }
-        
-    if (req.headers.register === 'true') {
-        return next()
-    }
-        
-    if (req.headers.reset === 'true') {
-        return next()
-    }
-        
-    if (req.headers.confirm === 'true') {
-        return next()
-    }
+        if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+            token = req.headers.authorization.split(' ')[1]
+            const decoded = verify(token, process.env.JWT_KEY as string)
 
-    if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
-
-        token = req.headers.authorization.split(' ')[1]
-
-        const decoded = verify(token, process.env.JWT_KEY as string)
-
-        if (decoded) {
-            req.isAuth = true
-            return next()
-        } else {
-            throw new Error ('Invalid Token')
+            if (decoded) {
+                req.isAuth = true
+                req.normalQuery = false
+                return next()
+            } else {
+                throw new Error ('Invalid Token')
+            }
         }
 
+        if (req.normalQuery) {
+            return next()
+        }
+
+        if (!token && !req.isAuth) {
+            throw new Error ("Unauthorized.")
+        }
+        
+    } catch (err) {
+        return err
     }
-
-    if (req.normalQuery) {
-        return next()
-    }
-
-    // if (!token) {
-    //     throw new Error ('Invalid Token')
-    // }
-
-    // return next()
 
 }
