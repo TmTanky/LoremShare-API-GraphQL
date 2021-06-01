@@ -70,22 +70,22 @@ export const auth: RequestHandler = (req, res, next) => {
 
     if (req.headers.login === 'true') {
         req.isAuth = false
-        return next()
+        next()
     }
         
     if (req.headers.register === 'true') {
         req.isAuth = false
-        return next()
+        next()
     }
         
     if (req.headers.reset === 'true') {
         req.isAuth = false
-        return next()
+        next()
     }
         
     if (req.headers.confirm === 'true') {
         req.isAuth = false
-        return next()
+        next()
     }
 
     if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
