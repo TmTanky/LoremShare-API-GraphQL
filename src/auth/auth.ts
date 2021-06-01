@@ -69,23 +69,19 @@ export const auth: RequestHandler = (req, res, next) => {
     let token 
 
     if (req.headers.login === 'true') {
-        req.isAuth = false
-        next()
+        return next()
     }
         
     if (req.headers.register === 'true') {
-        req.isAuth = false
-        next()
+        return next()
     }
         
     if (req.headers.reset === 'true') {
-        req.isAuth = false
-        next()
+        return next()
     }
         
     if (req.headers.confirm === 'true') {
-        req.isAuth = false
-        next()
+        return next()
     }
 
     if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
@@ -101,12 +97,16 @@ export const auth: RequestHandler = (req, res, next) => {
             throw new Error ('Invalid Token')
         }
 
-    } 
+    }
+
+    if (req.normalQuery) {
+        return next()
+    }
 
     // if (!token) {
     //     throw new Error ('Invalid Token')
     // }
 
-    next()
+    // return next()
 
 }
