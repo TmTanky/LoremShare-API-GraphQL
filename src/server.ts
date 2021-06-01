@@ -15,11 +15,11 @@ const PORT = process.env.PORT || 8000
 
 const app = express()
 
+connect(`${process.env.MONGO}`, {useFindAndModify: false, useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true})
+
 app.use(cors())
 app.use(express.json())
 app.use(express.urlencoded({extended: true}))
-
-connect(`mongodb+srv://TmAdmin:${process.env.MONGO}@cluster0.c7khy.mongodb.net/loremShare?retryWrites=true&w=majority`, {useFindAndModify: false, useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true})
 
 app.use(auth)
 app.use('/graphql', graphqlHTTP({
