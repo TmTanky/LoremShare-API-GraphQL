@@ -7,8 +7,6 @@ export const auth: RequestHandler = async (req: Request, res: Response, next: Ne
 
     try {
 
-        console.log('Middleware Done')
-
         if (req.headers.login === 'true') {
             req.isAuth = false
             next()
@@ -19,9 +17,19 @@ export const auth: RequestHandler = async (req: Request, res: Response, next: Ne
             next()
         }
 
+        if (req.headers.reset === 'true') {
+            req.isAuth = false
+            next()
+        }
+
+        if (req.headers.confirm === 'true') {
+            req.isAuth = false
+            next()
+        }
+
         if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
             token = req.headers.authorization.split(" ")[1]
-            // console.log(token)
+
             const decoded = verify(token, process.env.JWT_KEY as string)
     
             if (decoded) {

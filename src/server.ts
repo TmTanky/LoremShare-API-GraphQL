@@ -26,7 +26,7 @@ app.use(cookieSession({
 
 connect(`${process.env.MONGO}`, {useFindAndModify: false, useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true})
 
-app.use(auth)
+// app.use(auth)
 app.use('/graphql', graphqlHTTP({
     schema,
     rootValue,

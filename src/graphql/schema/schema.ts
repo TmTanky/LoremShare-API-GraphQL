@@ -12,7 +12,7 @@ export const schema = buildSchema(`
         reversePaginate(userID: ID, limitCount: Int, skipCount: Int): [post]
         getUserByUsername(username: String): [userInfo]
         viewUser(username: String): userInfo
-        viewUserPosts(username: String): [post]
+        viewUserPosts(username: String, limitCount: Int): [post]
         viewLikes(postID: ID): post
         viewPostComments(postID: ID): [comment]
         viewUserByID(userID: ID): userInfo

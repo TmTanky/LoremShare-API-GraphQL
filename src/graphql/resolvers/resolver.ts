@@ -251,9 +251,9 @@ export const rootValue = {
 
     },
 
-    viewUserPosts: async (args: {username: string}) => {
+    viewUserPosts: async (args: {username: string, limitCount: number}) => {
 
-        const {username} = args
+        const {username, limitCount} = args
 
         try {
 
@@ -269,6 +269,7 @@ export const rootValue = {
                 populate: 'commentBy'
             }).
             sort({_id: -1})
+            .limit(limitCount)
             // console.log(username)
             return viewingUsersPosts
 
